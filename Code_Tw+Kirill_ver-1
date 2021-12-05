@@ -1,0 +1,134 @@
+#define spdl 44 // (analog) скорость для левого колеса
+#define dirl 45 // (digital) направление для левого колеса
+#define spdr 46 // (analog) скорость для правого колеса
+#define dirr 47 // (digital) направление для правого колеса
+
+// аналоговые пины, к которым подкллючены датчики 
+#define analogPin0 A0
+#define analogPin1 A1
+#define analogPin2 A2
+#define analogPin3 A3
+#define analogPin4 A4
+#define analogPin5 A5
+#define analogPin6 A6
+#define analogPin7 A7
+
+void setup() {
+
+// датчики выдают сигнал
+pinMode(analogPin0, INPUT);
+pinMode(analogPin1, INPUT);
+pinMode(analogPin2, INPUT);
+pinMode(analogPin3, INPUT);
+pinMode(analogPin4, INPUT);
+pinMode(analogPin5, INPUT);
+
+// двигатели принимают значения
+pinMode(spdl, OUTPUT);
+pinMode(dirl, OUTPUT);
+pinMode(spdr, OUTPUT);
+pinMode(dirr, OUTPUT);
+
+// задержка перед пуском, чтобы успеть поставить робота
+delay (2000);
+
+}
+
+void loop() {
+
+  // вывод данных с датчиков на монитор Ардуино
+  Serial.print(analogRead(analogPin0));
+ Serial.print("   ");
+    Serial.print(analogRead(analogPin1));
+  Serial.print("   ");
+    Serial.print(analogRead(analogPin2));
+ Serial.print("   ");
+    Serial.print(analogRead(analogPin3));
+  Serial.print("   ");
+    Serial.print(analogRead(analogPin4));
+ Serial.print("   ");
+    Serial.print(analogRead(analogPin5));
+     Serial.print("   ");
+    Serial.print(analogRead(analogPin6));
+     Serial.print("   ");
+    Serial.print(analogRead(analogPin7));
+  Serial.print("   ");
+  Serial.println();
+
+// условие для движения вперед      
+  if (analogRead(analogPin3) > 650 && analogRead(analogPin4) > 650){
+    
+  analogWrite(spdl, 400);
+  digitalWrite(dirl, 0); 
+
+  analogWrite(spdr,400);
+  digitalWrite(dirr, 0); 
+
+  }
+
+  // условие для движения направо слабо
+  if (analogRead(analogPin2) > 650){
+    
+     
+  analogWrite(spdl, 400);
+  digitalWrite(dirl, 0); 
+
+  analogWrite(spdr,300);
+  digitalWrite(dirr, 0); 
+
+  }
+  // условие для движения налево слабо
+  if (analogRead(analogPin5) > 650){
+    
+     
+  analogWrite(spdl, 300);
+  digitalWrite(dirl, 0); 
+
+  analogWrite(spdr,400);
+  digitalWrite(dirr, 0); 
+  }
+  
+  // условие для движения направо средне
+  if (analogRead(analogPin6) > 650){
+      
+  analogWrite(spdl, 400);
+  digitalWrite(dirl, 0); 
+
+  analogWrite(spdr,200);
+  digitalWrite(dirr, 0); 
+  
+  }
+
+  // условие движения налево средне
+  if (analogRead(analogPin1) > 650){
+    
+  analogWrite(spdl, 200);
+  digitalWrite(dirl, 0); 
+
+  analogWrite(spdr,400);
+  digitalWrite(dirr, 0); 
+  
+  }
+
+  // условие для движения налево сильно
+  if (analogRead(analogPin0) > 650){
+      
+  analogWrite(spdl, 0);
+  digitalWrite(dirl, 0); 
+
+  analogWrite(spdr,400);
+  digitalWrite(dirr, 0); 
+
+  }
+
+  // условие для движения направо сильно
+  if (analogRead(analogPin7) > 650){
+      
+  analogWrite(spdl, 400);
+  digitalWrite(dirl, 0); 
+
+  analogWrite(spdr,0);
+  digitalWrite(dirr, 0); 
+  
+  }
+}
