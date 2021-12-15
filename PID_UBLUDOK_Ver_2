@@ -1,0 +1,109 @@
+#define spdr 44 // (analog) скорость для левого колеса
+#define dirr 45 // (digital) направление для левого колеса
+#define spdl 46 // (analog) скорость для правого колеса
+#define dirl 47 // (digital) направление для правого колеса
+
+// аналоговые пины, к которым подкллючены датчики 
+#define analogPin0 A0
+#define analogPin1 A1
+#define analogPin2 A2
+#define analogPin3 A3
+#define analogPin4 A4
+#define analogPin5 A5
+#define analogPin6 A6
+#define analogPin7 A7
+
+
+float E0 = 0;
+float E1 = 0;
+float E2 = 0;
+float U0 = 0;
+float U1 = 0;
+float T;
+int Kp;
+int Ki;
+int Kd;
+
+
+void setup() {
+
+Serial.begin(9600);
+
+// датчики выдают сигнал
+pinMode(analogPin0, INPUT);
+pinMode(analogPin1, INPUT);
+pinMode(analogPin2, INPUT);
+pinMode(analogPin3, INPUT);
+pinMode(analogPin4, INPUT);
+pinMode(analogPin5, INPUT);
+
+// двигатели принимают значения
+pinMode(spdl, OUTPUT);
+pinMode(dirl, OUTPUT);
+pinMode(spdr, OUTPUT);
+pinMode(dirr, OUTPUT);
+
+// задержка перед пуском, чтобы успеть поставить робота
+delay (2000);
+
+E1 = 0, E2 = 0, U1 = 0;
+
+Kp = 1, Ki = 1, Kd = 1;
+
+}
+
+  
+void loop() {
+
+ // вывод данных с датчиков на монитор Ардуино
+  /*Serial.print(analogRead(analogPin0));
+ Serial.print("   ");
+  Serial.print(analogRead(analogPin1));
+ Serial.print("   ");
+  Serial.print(analogRead(analogPin2));
+ Serial.print("   ");
+  Serial.print(analogRead(analogPin3));
+ Serial.print("   ");
+  Serial.print(analogRead(analogPin4));
+ Serial.print("   ");
+  Serial.print(analogRead(analogPin5));
+ Serial.print("   ");
+  Serial.print(analogRead(analogPin6));
+ Serial.print("   ");
+  Serial.print(analogRead(analogPin7));
+ Serial.print("   ");
+*/
+// время дискретизации
+T = millis()/1000;
+
+// ошибка 
+E0 = (-0,004) * analogRead(analogPin0) + (-0,003) * analogRead(analogPin1) + (-0,002) * analogRead(analogPin2) + (-0,001) * analogRead(analogPin3) + 0,001 * analogRead(analogPin4) + 0,002 * analogRead(analogPin5) + 0,003 * analogRead(analogPin6) + 0,004 * analogRead(analogPin7);
+
+// PID значение  
+U0 = (U1 + Kp * Ki * T * E0 + Kp * (E0 - E1) + (Kp * Kd * (E0 - 2 * E1 + E2))/T)/1000;
+U1 = U0;
+E2 = E1;
+E1 = E0;  
+
+Serial.print(U0);
+ Serial.print("   ");
+Serial.print(E0);
+ Serial.print("   ");
+Serial.println();
+  
+// скорость колес
+if (U0 < 0){
+analogWrite(spdl, (50 + U0));
+digitalWrite(dirl, 0); 
+
+analogWrite(spdr, (50 - U0));
+digitalWrite(dirr, 0);
+}
+else{
+ analogWrite(spdl, (50 - U0));
+digitalWrite(dirl, 0); 
+
+analogWrite(spdr, (50 + U0));
+digitalWrite(dirr, 0); 
+}
+}
